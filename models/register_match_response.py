@@ -1,0 +1,2 @@
+class RegisterMatchResponse:
+    id: str

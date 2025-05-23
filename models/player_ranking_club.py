@@ -1,0 +1,2 @@
+class PlayerRankingClub:
+    name: str

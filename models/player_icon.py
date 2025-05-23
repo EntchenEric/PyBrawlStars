@@ -1,0 +1,2 @@
+class PlayerIcon:
+    id: int
