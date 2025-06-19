@@ -3,8 +3,9 @@ from models.player_club import PlayerClub, from_json as player_club_from_json
 from models.player_icon import PlayerIcon, from_json as player_icon_from_json
 from models.brawler_stat import BrawlerStat, from_json as brawler_stat_from_json
 from models.club import Club
-from client import BSClient
-from typing import Any 
+from typing import Any, TYPE_CHECKING
+if TYPE_CHECKING:
+    from client import BSClient
 
 class Player:
     """
