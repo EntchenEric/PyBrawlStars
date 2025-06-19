@@ -1,16 +1,72 @@
-from models.parse_error import ParseException
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from client import BSClient
+
+try:
+    from models.parse_error import ParseException
+except ImportError:
+    class ParseException(Exception):
+        """Custom exception for parsing errors."""
+        pass
+
 
 class PlayerClub:
-    name: str
-    tag: str
+    """
+    Represents a player's club information.
 
-    def __init__(self, name: str, tag: str):
-        self.name = name
+    Attributes:
+        tag: The club's unique tag.
+        name: The name of the club.
+    """
+    def __init__(
+        self,
+        tag: str,
+        name: str
+    ):
+        """
+        Initialize a new PlayerClub instance.
+
+        Args:
+            tag: The club's unique tag.
+            name: The name of the club.
+        """
         self.tag = tag
+        self.name = name
 
-def from_json(json: dict[str, str]) -> PlayerClub:
-    try:
-        print("json: ", json)
-        PlayerClub(name = json.get("name"), tag = json.get("tag"))
-    except:
-        raise ParseException()
+    def __str__(self) -> str:
+        """
+        Returns the string representation of the player's club.
+
+        Returns:
+            str: The club's name and tag.
+        """
+        return f"{self.name} ({self.tag})"
+
+    @staticmethod
+    def from_json(json_data: dict[str, Any], client: "BSClient") -> "PlayerClub":
+        """
+        Creates a PlayerClub instance from JSON data.
+
+        Args:
+            json_data (dict[str, Any]): The JSON data to parse.
+            client (BSClient): The BSClient instance.
+
+        Returns:
+            PlayerClub: A new PlayerClub instance.
+
+        Raises:
+            ParseException: If the JSON data is invalid or missing required fields.
+        """
+        if not isinstance(json_data, dict):
+            raise ParseException(f"Expected a dictionary for player club data, got {type(json_data)}")
+
+        try:
+            return PlayerClub(
+                tag=str(json_data.get("tag", "")),
+                name=str(json_data.get("name", ""))
+            )
+        except (TypeError, ValueError) as e:
+            raise ParseException(f"Failed to parse player club data: {e}")
+        except Exception as e:
+            raise ParseException(f"An unexpected error occurred while parsing player club data: {e}")

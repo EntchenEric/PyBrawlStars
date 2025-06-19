@@ -1,18 +1,33 @@
 from models.parse_error import ParseException
-from models.player_club import PlayerClub, from_json as player_club_from_json
-from models.player_icon import PlayerIcon, from_json as player_icon_from_json
-from models.brawler_stat import BrawlerStat, from_json as brawler_stat_from_json
+from models.player_club import PlayerClub
+from models.player_icon import PlayerIcon
+from models.brawler import Brawler
 from models.club import Club
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from client import BSClient
-
+        
 class Player:
     """
     Represents a player in the game.
 
-    This class stores all relevant information about a player, including their
-    club, stats, brawlers, and cosmetic details.
+    Attributes:
+        club: The player's club information.
+        icon: The player's icon.
+        tag: The player's unique tag.
+        name: The player's name.
+        trophies: The player's total trophies.
+        exp_level: The player's experience level.
+        exp_points: The player's experience points.
+        highest_trophies: The player's highest trophy count.
+        power_play_points: The player's power play points.
+        highest_power_play_points: The player's highest power play points.
+        brawlers: List of the player's brawlers.
+        duo_victories: Number of duo victories.
+        solo_victories: Number of solo victories.
+        trio_victories: Number of 3v3 victories.
+        best_robo_rumble_time: Best time in Robo Rumble.
+        best_time_as_big_brawler: Best time as Big Brawler.
     """
     club: PlayerClub | None
     """The club the player is currently in, or None if not in a club."""
@@ -56,21 +71,30 @@ class Player:
     best_time_as_big_brawler: int
     """The player's best survival time as the Big Brawler in Big Game event, in seconds."""
 
-    brawlers: list[BrawlerStat]
-    """A list of `BrawlerStat` objects, representing the player's brawlers and their stats."""
+    brawlers: list[Brawler]
+    """A list of `Brawler` objects, representing the player's brawlers and their stats."""
 
     name_color: str
     """The hexadecimal color code for the player's name (e.g., '0xffc03aff')."""
 
-    client: BSClient
+    client: "BSClient"
     """The brawlstars Client."""
+
+    power_play_points: int
+    """The player's power play points."""
+
+    highest_power_play_points: int
+    """The player's highest power play points."""
+
+    trio_victories: int
+    """The total number of 3v3 victories. Defaults to 0."""
 
     def __init__(
         self,
-        client: BSClient,
+        client: "BSClient",
         club: PlayerClub | None,
         is_qualified_from_championship_challenge: bool,
-        three_vs_three_victories: int, # Corrected type
+        three_vs_three_victories: int,
         icon: PlayerIcon,
         tag: str,
         name: str,
@@ -78,11 +102,14 @@ class Player:
         exp_level: int,
         exp_points: int,
         highest_trophies: int,
-        solo_victories: int,
+        power_play_points: int,
+        highest_power_play_points: int,
+        brawlers: list[Brawler],
         duo_victories: int,
+        solo_victories: int,
+        trio_victories: int,
         best_robo_rumble_time: int,
         best_time_as_big_brawler: int,
-        brawlers: list[BrawlerStat],
         name_color: str,
     ):
         """
@@ -99,11 +126,14 @@ class Player:
             exp_level: Current experience level.
             exp_points: Total experience points.
             highest_trophies: Highest ever trophy count.
-            solo_victories: Total solo Showdown wins.
+            power_play_points: The player's power play points.
+            highest_power_play_points: The player's highest power play points.
+            brawlers: List of player's brawlers with their stats.
             duo_victories: Total duo Showdown wins.
+            solo_victories: Total solo Showdown wins.
+            trio_victories: Total 3v3 wins.
             best_robo_rumble_time: Best Robo Rumble score/time.
             best_time_as_big_brawler: Best time as Big Brawler.
-            brawlers: List of player's brawlers with their stats.
             name_color: Hex color code for the player's name.
         """
         self.client = client
@@ -117,11 +147,14 @@ class Player:
         self.exp_level = exp_level
         self.exp_points = exp_points
         self.highest_trophies = highest_trophies
-        self.solo_victories = solo_victories
+        self.power_play_points = power_play_points
+        self.highest_power_play_points = highest_power_play_points
+        self.brawlers = brawlers
         self.duo_victories = duo_victories
+        self.solo_victories = solo_victories
+        self.trio_victories = trio_victories
         self.best_robo_rumble_time = best_robo_rumble_time
         self.best_time_as_big_brawler = best_time_as_big_brawler
-        self.brawlers = brawlers
         self.name_color = name_color
 
     def __str__(self) -> str:
@@ -131,68 +164,69 @@ class Player:
         Returns:
             The player's name.
         """
-        return self.name
+        club_str = f" [{self.club.name}]" if self.club else ""
+        return f"{self.name}{club_str} ({self.tag}) - {self.trophies} trophies"
 
     async def fetch_club(self) -> Club | None:
         await self.client.get_club(self.club.tag)
 
+    @staticmethod
+    def from_json(json_data: dict[str, Any], client: "BSClient") -> "Player":
+        """
+        Creates a Player instance from JSON data.
 
-def from_json(json_data: dict[str, Any], client: BSClient) -> Player:
-    """
-    Parses a JSON dictionary and creates a Player object.
+        Args:
+            json_data (dict[str, Any]): The JSON data to parse.
+            client (BSClient): The BSClient instance.
 
-    Args:
-        json_data: A dictionary containing player data, typically from an API response.
-                   The dictionary can have varied value types, not just strings.
+        Returns:
+            Player: A new Player instance.
 
-    Returns:
-        A Player object initialized with data from the JSON.
+        Raises:
+            ParseException: If the JSON data is invalid or missing required fields.
+        """
+        if not isinstance(json_data, dict):
+            raise ParseException(f"Expected a dictionary for player data, got {type(json_data)}")
 
-    Raises:
-        ParseException: If an error occurs during parsing of the player data
-                        or any of its nested objects (club, icon, brawlers).
-    """
-    if not isinstance(json_data, dict):
-        raise ParseException(f"Expected a dictionary for player data, got {type(json_data)}")
+        try:
+            club_data = json_data.get("club")
+            club = PlayerClub.from_json(club_data, client) if isinstance(club_data, dict) else None
 
-    try:
-        client = client
-        club_data = json_data.get("club")
-        player_club = player_club_from_json(club_data) if club_data else None
+            icon_data = json_data.get("icon")
+            if not isinstance(icon_data, dict):
+                raise ParseException(f"Expected 'icon' to be a dictionary, got {type(icon_data)}")
+            icon = PlayerIcon.from_json(icon_data, client)
 
-        icon_data = json_data.get("icon")
-        if icon_data is None:
-            raise ParseException("Missing 'icon' data in player JSON.")
-        player_icon_obj = player_icon_from_json(icon_data)
+            brawlers_data = json_data.get("brawlers", [])
+            if not isinstance(brawlers_data, list):
+                raise ParseException(f"Expected 'brawlers' to be a list, got {type(brawlers_data)}")
+            brawlers = [Brawler.from_json(b, client) for b in brawlers_data if isinstance(b, dict)]
 
-        brawlers_data = json_data.get("brawlers", [])
-        parsed_brawlers = [
-            brawler_stat_from_json(brawler) for brawler in brawlers_data if isinstance(brawler, dict)
-        ]
-
-        return Player(
-            club=player_club,
-            is_qualified_from_championship_challenge=bool(json_data.get(
-                "isQualifiedFromChampionshipChallenge", False
-            )),
-            three_vs_three_victories=int(json_data.get("3vs3Victories", 0)),
-            icon=player_icon_obj,
-            tag=str(json_data.get("tag", "")),
-            name=str(json_data.get("name", "N/A")),
-            trophies=int(json_data.get("trophies", 0)),
-            exp_level=int(json_data.get("expLevel", 0)),
-            exp_points=int(json_data.get("expPoints", 0)),
-            highest_trophies=int(json_data.get("highestTrophies", 0)),
-            solo_victories=int(json_data.get("soloVictories", 0)),
-            duo_victories=int(json_data.get("duoVictories", 0)),
-            best_robo_rumble_time=int(json_data.get("bestRoboRumbleTime", 0)),
-            best_time_as_big_brawler=int(json_data.get("bestTimeAsBigBrawler", 0)),
-            brawlers=parsed_brawlers,
-            name_color=str(json_data.get("nameColor", "0x00000000")),
-        )
-    except (TypeError, ValueError, KeyError) as e:
-        raise ParseException(f"Failed to parse player data: {e}. Input: {json_data}")
-    except ParseException:
-        raise
-    except Exception as e:
-        raise ParseException(f"An unexpected error occurred while parsing player data: {e}")
+            return Player(
+                client=client,
+                club=club,
+                is_qualified_from_championship_challenge=bool(json_data.get(
+                    "isQualifiedFromChampionshipChallenge", False
+                )),
+                three_vs_three_victories=int(json_data.get("3vs3Victories", 0)),
+                icon=icon,
+                tag=str(json_data.get("tag", "")),
+                name=str(json_data.get("name", "N/A")),
+                trophies=int(json_data.get("trophies", 0)),
+                exp_level=int(json_data.get("expLevel", 0)),
+                exp_points=int(json_data.get("expPoints", 0)),
+                highest_trophies=int(json_data.get("highestTrophies", 0)),
+                power_play_points=int(json_data.get("powerPlayPoints", 0)),
+                highest_power_play_points=int(json_data.get("highestPowerPlayPoints", 0)),
+                brawlers=brawlers,
+                duo_victories=int(json_data.get("duoVictories", 0)),
+                solo_victories=int(json_data.get("soloVictories", 0)),
+                trio_victories=int(json_data.get("3vs3Victories", 0)),
+                best_robo_rumble_time=int(json_data.get("bestRoboRumbleTime", 0)),
+                best_time_as_big_brawler=int(json_data.get("bestTimeAsBigBrawler", 0)),
+                name_color=str(json_data.get("nameColor", "0x00000000")),
+            )
+        except (TypeError, ValueError) as e:
+            raise ParseException(f"Failed to parse player data: {e}")
+        except Exception as e:
+            raise ParseException(f"An unexpected error occurred while parsing player data: {e}")
