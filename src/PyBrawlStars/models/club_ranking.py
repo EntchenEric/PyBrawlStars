@@ -1,4 +1,4 @@
-from models.club_type import ClubType
+from .club_type import ClubType
 from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:

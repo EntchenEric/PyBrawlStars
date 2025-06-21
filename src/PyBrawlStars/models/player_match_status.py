@@ -1,5 +1,5 @@
 from typing import Any, TYPE_CHECKING, Dict
-from models.brawler_info import BrawlerInfo
+from .brawler_info import BrawlerInfo
 
 if TYPE_CHECKING:
     from client import BSClient

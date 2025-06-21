@@ -1,4 +1,4 @@
-from models.errors.client_error import ClientError
+from .client_error import ClientError
 
 class APIError(ClientError):
     """Raised for non-2xx API responses."""

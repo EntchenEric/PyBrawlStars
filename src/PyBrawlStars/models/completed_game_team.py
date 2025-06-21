@@ -1,5 +1,5 @@
-from models.siege_stats import SiegeStats
-from models.player_entry_completed_game import PlayerEntryCompletedGame
+from .siege_stats import SiegeStats
+from .player_entry_completed_game import PlayerEntryCompletedGame
 from typing import Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:

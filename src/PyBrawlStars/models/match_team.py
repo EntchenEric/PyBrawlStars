@@ -1,5 +1,5 @@
-from models.match_team_player import MatchTeamPlayer
-from models.brawler_info import BrawlerInfo
+from .match_team_player import MatchTeamPlayer
+from .brawler_info import BrawlerInfo
 from typing import Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:

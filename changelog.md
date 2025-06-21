@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2025-01-27
+
+### Fixed
+- Fixed all `__init__.py` files to properly expose library classes and modules.
+- Corrected all import statements throughout the codebase to use relative imports instead of absolute imports.
+- Fixed circular import issues in model files.
+- Updated main package `__init__.py` to properly export `BSClient` and error classes.
+- Added comprehensive model exports in `models/__init__.py` for better API accessibility.
+- Fixed error class imports in the errors module.
+
+### Changed
+- Improved package structure and import organization for better developer experience.
+- All model classes are now properly accessible through the main package imports.
+
 ## [1.0.3] - 2025-06-21
 
 ### Fixed

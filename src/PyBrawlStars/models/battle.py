@@ -1,5 +1,5 @@
-from models.battle_result import BattleResult
-from models.event import Event
+from .battle_result import BattleResult
+from .event import Event
 from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:

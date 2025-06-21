@@ -10,7 +10,7 @@ except ImportError:
         """Custom exception for parsing errors."""
         pass
 
-from models.brawler_info import BrawlerInfo
+from .brawler_info import BrawlerInfo
 
 class MatchTeamPlayer:
     """

@@ -1,5 +1,5 @@
-from models.accessory import Accessory
-from models.star_power import StarPower
+from .accessory import Accessory
+from .star_power import StarPower
 from typing import Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:

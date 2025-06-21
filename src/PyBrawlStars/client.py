@@ -1,19 +1,16 @@
 import asyncio
 import httpx
 from typing import Any, Callable, Type, TypeVar, List
-from models.errors.client_error import ClientError
-from models.errors.network_error import NetworkError
-from models.errors.api_error import APIError
-from models.battle import Battle
-from models.player import Player
-from models.club_member import ClubMember
-from models.club import Club
-from models.brawler import Brawler
-from models.scheduled_event import ScheduledEvent
-from utility import parse_tag
-from models.player import Player
-from models.club import Club
-from utility import parse_tag
+from .models.errors.client_error import ClientError
+from .models.errors.network_error import NetworkError
+from .models.errors.api_error import APIError
+from .models.battle import Battle
+from .models.player import Player
+from .models.club_member import ClubMember
+from .models.club import Club
+from .models.brawler import Brawler
+from .models.scheduled_event import ScheduledEvent
+from .utility import parse_tag
 
 T = TypeVar("T")
 

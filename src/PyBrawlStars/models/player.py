@@ -1,8 +1,8 @@
-from models.parse_error import ParseException
-from models.player_club import PlayerClub
-from models.player_icon import PlayerIcon
-from models.brawler import Brawler
-from models.club import Club
+from .parse_error import ParseException
+from .player_club import PlayerClub
+from .player_icon import PlayerIcon
+from .brawler import Brawler
+from .club import Club
 from typing import Any, TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from client import BSClient

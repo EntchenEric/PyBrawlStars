@@ -1,4 +1,4 @@
-from models.brawler_info import BrawlerInfo
+from .brawler_info import BrawlerInfo
 from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -1,4 +1,4 @@
-from models.game_mode import GameMode
+from .game_mode import GameMode
 from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:

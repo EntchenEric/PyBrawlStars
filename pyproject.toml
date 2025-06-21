@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "PyBrawlStars"
-version = "1.0.3"
+version = "1.0.4"
 description = "An asynchronous Python wrapper for the Brawl Stars API"
 readme = "README.md"
 license = {text = "MIT"}

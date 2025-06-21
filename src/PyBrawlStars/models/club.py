@@ -1,5 +1,5 @@
-from models.club_member import ClubMember
-from models.club_type import ClubType
+from .club_member import ClubMember
+from .club_type import ClubType
 from typing import Any, TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:

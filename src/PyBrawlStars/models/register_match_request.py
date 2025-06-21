@@ -1,6 +1,6 @@
 from typing import Any, TYPE_CHECKING, List, Optional
-from models.match_mode import MatchMode
-from models.game_mode import GameMode
+from .match_mode import MatchMode
+from .game_mode import GameMode
 
 if TYPE_CHECKING:
     from client import BSClient

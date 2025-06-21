@@ -1,7 +1,7 @@
-from models.parse_error import ParseException
-from models.star_power import StarPower
-from models.accessory import Accessory
-from models.gear_stat import GearStat
+from .parse_error import ParseException
+from .star_power import StarPower
+from .accessory import Accessory
+from .gear_stat import GearStat
 from typing import Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:

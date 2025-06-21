@@ -1,5 +1,5 @@
-from models.completed_game_team import CompletedGameTeam
-from models.termination_reason import TerminationReason
+from .completed_game_team import CompletedGameTeam
+from .termination_reason import TerminationReason
 from typing import Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:

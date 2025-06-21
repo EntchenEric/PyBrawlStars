@@ -1,5 +1,5 @@
-from models.player_icon import PlayerIcon
-from models.player_club import PlayerClub
+from .player_icon import PlayerIcon
+from .player_club import PlayerClub
 from typing import Any, TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:

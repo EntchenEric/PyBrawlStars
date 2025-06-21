@@ -1,5 +1,5 @@
 from typing import Any, TYPE_CHECKING, Optional
-from models.match_location import MatchLocation
+from .match_location import MatchLocation
 
 if TYPE_CHECKING:
     from client import BSClient

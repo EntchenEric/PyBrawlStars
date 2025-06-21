@@ -1,8 +1,8 @@
-from models.match_team import MatchTeam
-from models.completed_game import CompletedGame
-from models.game_phase import GamePhase
-from models.player_match_status import PlayerMatchStatus
-from models.match_state import MatchState
+from .match_team import MatchTeam
+from .completed_game import CompletedGame
+from .game_phase import GamePhase
+from .player_match_status import PlayerMatchStatus
+from .match_state import MatchState
 from typing import Any, TYPE_CHECKING, List
 
 if TYPE_CHECKING:
