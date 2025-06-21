@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Corrected a build configuration error (`pyproject.toml`) that excluded the source code from the final package, which made imports fail.
+- Moved examples to `src` folder.
 
 ## [1.0.0] - 2025-06-21
 
