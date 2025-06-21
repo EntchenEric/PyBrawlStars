@@ -68,9 +68,6 @@ Repository = "https://github.com/EntchenEric/PyBrawlStars"
 Changelog = "https://github.com/EntchenEric/PyBrawlStars/blob/master/changelog.md"
 "Bug Tracker" = "https://github.com/EntchenEric/PyBrawlStars/issues"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
 [tool.setuptools.packages.find]
 where = ["."]
 
