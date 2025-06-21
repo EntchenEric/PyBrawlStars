@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "PyBrawlStars"
-version = "1.0.0"
+version = "1.0.1"
 description = "An asynchronous Python wrapper for the Brawl Stars API"
 readme = "README.md"
 license = {text = "MIT"}
@@ -72,7 +72,7 @@ Changelog = "https://github.com/EntchenEric/PyBrawlStars/blob/master/changelog.m
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 
 [tool.setuptools.package-data]
 "*" = ["py.typed"]
