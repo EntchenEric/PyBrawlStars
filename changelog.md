@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Corrected configuration error (`pyproject.toml`).
+- Moved code to `PyBrawlStars` folder.
 
 ## [1.0.1] - 2025-06-21
 
