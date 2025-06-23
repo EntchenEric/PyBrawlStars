@@ -1,4 +1,7 @@
 from typing import Any, TYPE_CHECKING, List, Optional
+from datetime import datetime
+from .game_mode import GameMode
+from .battle_player import BattlePlayer
 
 if TYPE_CHECKING:
     from client import BSClient
@@ -16,12 +19,18 @@ class BattleResult:
     Represents the result of a battle in the game.
 
     Attributes:
+        battle_time: The timestamp when the battle occurred.
         duration: The duration of the battle in seconds.
         trophy_change: The change in trophies after the battle.
-        rank: The rank achieved in the battle (for solo/duo modes).
-        star_player_tag: The tag of the star player (if any).
+        mode: The game mode of the battle.
+        type: The type of battle.
+        result: The result of the battle.
+        star_player: The star player of the battle (if any).
         teams: List of teams that participated in the battle.
     """
+
+    battle_time: datetime
+    """The timestamp when the battle occurred."""
 
     duration: int
     """The duration of the battle in seconds."""
@@ -29,37 +38,52 @@ class BattleResult:
     trophy_change: int
     """The change in trophies after the battle. Can be positive or negative."""
 
-    rank: Optional[int]
-    """The rank achieved in the battle (for solo/duo modes). None for 3v3 modes."""
+    mode: GameMode
+    """The game mode of the battle."""
 
-    star_player_tag: Optional[str]
-    """The tag of the star player. None if no star player was selected."""
+    type: str
+    """The type of battle."""
 
-    teams: List[List[str]]
-    """List of teams that participated in the battle. Each team is a list of player tags."""
+    result: str
+    """The result of the battle."""
+
+    star_player: BattlePlayer | None
+    """The star player of the battle (if any)."""
+
+    teams: List[List[BattlePlayer]]
+    """List of teams that participated in the battle."""
 
     def __init__(
         self,
+        battle_time: datetime,
         duration: int,
         trophy_change: int,
-        rank: Optional[int] = None,
-        star_player_tag: Optional[str] = None,
-        teams: Optional[List[List[str]]] = None
+        mode: GameMode,
+        type: str,
+        result: str,
+        star_player: BattlePlayer | None = None,
+        teams: List[List[BattlePlayer]] | None = None
     ):
         """
         Initialize a new BattleResult instance.
 
         Args:
+            battle_time: The timestamp when the battle occurred.
             duration: The duration of the battle in seconds.
             trophy_change: The change in trophies after the battle.
-            rank: The rank achieved in the battle (for solo/duo modes).
-            star_player_tag: The tag of the star player (if any).
+            mode: The game mode of the battle.
+            type: The type of battle.
+            result: The result of the battle.
+            star_player: The star player of the battle (if any).
             teams: List of teams that participated in the battle.
         """
+        self.battle_time = battle_time
         self.duration = duration
         self.trophy_change = trophy_change
-        self.rank = rank
-        self.star_player_tag = star_player_tag
+        self.mode = mode
+        self.type = type
+        self.result = result
+        self.star_player = star_player
         self.teams = teams or []
 
     def __str__(self) -> str:
@@ -69,9 +93,7 @@ class BattleResult:
         Returns:
             str: A string containing the battle duration and trophy change.
         """
-        result = f"Battle ({self.duration}s): {self.trophy_change:+d} trophies"
-        if self.rank:
-            result += f", Rank {self.rank}"
+        result = f"Battle ({self.duration}s): {self.trophy_change:+d} trophies, Result: {self.result}"
         return result
 
     @staticmethod
@@ -93,20 +115,43 @@ class BattleResult:
             raise ParseException(f"Expected a dictionary for battle result data, got {type(json_data)}")
 
         try:
-            teams_data = json_data.get("teams", [])
+            # Parse battle time
+            battle_time_str = json_data.get("battleTime", "")
+            if battle_time_str:
+                battle_time = datetime.fromisoformat(battle_time_str.rstrip('Z'))
+            else:
+                battle_time = datetime.now()
+
+            # Parse mode
+            mode_data = json_data.get("battle", {}).get("mode")
+            if not isinstance(mode_data, dict):
+                raise ParseException(f"Expected 'mode' to be a dictionary, got {type(mode_data)}")
+            mode = GameMode.from_json(mode_data, client)
+
+            # Parse star player
+            star_player_data = json_data.get("battle", {}).get("starPlayer")
+            star_player = BattlePlayer.from_json(star_player_data, client) if star_player_data else None
+
+            # Parse teams
+            teams_data = json_data.get("battle", {}).get("teams", [])
             if not isinstance(teams_data, list):
                 raise ParseException(f"Expected 'teams' to be a list, got {type(teams_data)}")
+            
             teams = []
-            for team in teams_data:
-                if not isinstance(team, list):
-                    raise ParseException(f"Expected team to be a list, got {type(team)}")
-                teams.append([str(tag) for tag in team if isinstance(tag, (str, int))])
+            for team_data in teams_data:
+                if not isinstance(team_data, list):
+                    raise ParseException(f"Expected team to be a list, got {type(team_data)}")
+                team = [BattlePlayer.from_json(player_data, client) for player_data in team_data if isinstance(player_data, dict)]
+                teams.append(team)
 
             return BattleResult(
-                duration=int(json_data.get("duration", 0)),
-                trophy_change=int(json_data.get("trophyChange", 0)),
-                rank=int(json_data["rank"]) if "rank" in json_data else None,
-                star_player_tag=str(json_data["starPlayer"]["tag"]) if "starPlayer" in json_data else None,
+                battle_time=battle_time,
+                duration=int(json_data.get("battle", {}).get("duration", 0)),
+                trophy_change=int(json_data.get("battle", {}).get("trophyChange", 0)),
+                mode=mode,
+                type=str(json_data.get("battle", {}).get("type", "")),
+                result=str(json_data.get("battle", {}).get("result", "")),
+                star_player=star_player,
                 teams=teams
             )
         except (TypeError, ValueError) as e:

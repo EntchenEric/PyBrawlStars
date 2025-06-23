@@ -1,4 +1,3 @@
-import asyncio
 import httpx
 from typing import Any, Callable, Type, TypeVar, List
 from .models.errors.client_error import ClientError

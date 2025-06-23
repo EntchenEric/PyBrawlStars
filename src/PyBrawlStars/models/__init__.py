@@ -43,6 +43,8 @@ from .gear_stat import GearStat
 # Battle-related models
 from .battle_region import BattleRegion
 from .battle_result import BattleResult
+from .battle_player import BattlePlayer
+from .battle_brawler import BattleBrawler
 from .banned_brawler_entry import BannedBrawlerEntry
 from .completed_game import CompletedGame
 from .completed_game_team import CompletedGameTeam
@@ -105,6 +107,8 @@ __all__ = [
     # Battle-related models
     "BattleRegion",
     "BattleResult",
+    "BattlePlayer",
+    "BattleBrawler",
     "BannedBrawlerEntry",
     "CompletedGame",
     "CompletedGameTeam",
