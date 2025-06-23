@@ -48,6 +48,7 @@ from .battle_brawler import BattleBrawler
 from .banned_brawler_entry import BannedBrawlerEntry
 from .completed_game import CompletedGame
 from .completed_game_team import CompletedGameTeam
+from .battle import Battle
 
 # Game mechanics models
 from .event_modifier import EventModifier
@@ -112,6 +113,7 @@ __all__ = [
     "BannedBrawlerEntry",
     "CompletedGame",
     "CompletedGameTeam",
+    "Battle"
     
     # Game mechanics models
     "EventModifier",

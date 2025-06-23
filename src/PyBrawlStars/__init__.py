@@ -44,6 +44,7 @@ from .models.battle_result import BattleResult
 from .models.banned_brawler_entry import BannedBrawlerEntry
 from .models.completed_game import CompletedGame
 from .models.completed_game_team import CompletedGameTeam
+from .models.battle import Battle
 
 # Game mechanics models
 from .models.event_modifier import EventModifier
@@ -60,7 +61,7 @@ from .models.stats import Stats
 from .models.termination_reason import TerminationReason
 from .models.timer_preset import TimerPreset
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 __author__ = "EntchenEic"
 __license__ = "MIT"
 
@@ -112,6 +113,7 @@ __all__ = [
     "BannedBrawlerEntry",
     "CompletedGame",
     "CompletedGameTeam",
+    "Battle"
     
     # Game mechanics models
     "EventModifier",
